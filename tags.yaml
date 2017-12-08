@@ -1,0 +1,27 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+   - name: installing httpd packages on RedHat
+     yum: name=httpd state=present
+     ignore_errors: yes
+     when: ansible_os_family=="RedHat"
+     tags: 
+      - install
+
+   - name: installing apache2 package on Debian
+     apt: name=apache2 state=present
+     when: ansible_os_family=="Debian"
+     tags:
+      - debian
+   - name: copy index.html file
+     copy: src=index.html dest=/var/www/html
+     notify: service should restarted
+     tags: 
+      - copy
+
+  handlers:
+   - name: service should restarted
+     service: name=httpd state=restarted
+     tags:
+      - restart

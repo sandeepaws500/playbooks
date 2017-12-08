@@ -1,0 +1,14 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+   - name: installing httpd packages
+     yum: name=httpd1 state=present
+     ignore_errors: yes
+   - name: copy index.html file
+     copy: src=index.html dest=/var/www/html
+     notify: service should restarted
+  handlers: 
+   - name: service should restarted
+     service: name=httpd state=restarted
+
